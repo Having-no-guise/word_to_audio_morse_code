@@ -1,5 +1,6 @@
 import winsound
 import time
+import random
 
 code = {'А': '.-',
         'Б': '-...',
@@ -42,7 +43,7 @@ code = {'А': '.-',
         '7': '--...',
         '8': '---..',
         '9': '----.',
-        '0': '-----'}#словарь символов
+        '0': '-----'}  # словарь символов
 
 '''
 за единицу времени принимается длительность короткого сигнала (одной точки);
@@ -52,39 +53,41 @@ code = {'А': '.-',
 пауза между словами — семь точек.
 '''
 
-def output(line, frequency, point, dash, sleep_spase):
-    for i in line:
-        if i == ' ':
-            time.sleep(sleep_spase)
-        if i in code.keys() and i != ' ':
-            symbol = code[i]
-            for i in symbol:
-                if i == '.':
-                    winsound.Beep(frequency, point)
-                    time.sleep(point / 1000)
-                if i == '-':
-                    winsound.Beep(frequency, dash)
-                    time.sleep(point / 1000)
-        time.sleep(point*3/1000)
+
+def output(mass, frequency, point, dash, sleep_spase):
+    for group in mass:
+        for i in group:
+            if i == ' ':
+                time.sleep(sleep_spase)
+            if i in code.keys() and i != ' ':
+                symbol = code[i]
+                for j in symbol:
+                    if j == '.':
+                        winsound.Beep(frequency, point)
+                        time.sleep(point / 1000)
+                    if j == '-':
+                        winsound.Beep(frequency, dash)
+                        time.sleep(point / 1000)
+            time.sleep(point * 3 / 1000)
+        time.sleep(sleep_spase)
 
 
 def main():
-    print('Данная программа преобразует написанные буквы русского алфавит в код морзе, с максимальной скоростью около'
-          ' 20 символов в минуту')
+    print('Данная программа является аналогом АДКМ. На вход подается частота звука, скорость "точки", количество групп'
+          ' и символов в группе, а также сами символы (русский алфавит и цифры)')
     while True:
         try:
-            frequency = int(input('Введите частоту воспроизводимого сигнала (в Гц): '))  # Частота воспроизводимого звука
+            frequency = int(
+                input('Введите частоту воспроизводимого сигнала (в Гц): '))  # Частота воспроизводимого звука
+            point = int(
+                input('Введите длительность "точки" (влияет на скорость воспроизведения): '))  # длительность "точки"
+            count_of_group = int(input('Введите количество групп: '))
+            count_of_symbol = int(input('Введите количество символов в группе: '))
             break
         except ValueError:
             print('Было введено не число')
-    while True:
-        try:
-            point = int(input('Введите длительность "точки" (минимальная длительность - 150): '))  # длительность "точки"
-            break
-        except ValueError:
-            print('Было введено не число')
-    dash = point*3
-    sleep_spase = point*7/1000 #time.sleep(time) time in second
+    dash = point * 3
+    sleep_spase = point * 7 / 1000  # time.sleep(time) time in second
     flag = True
     while flag:
         line = input('Введите символы (русская раскладка, заглавные буквы) ')
@@ -94,9 +97,15 @@ def main():
                 break
             else:
                 flag = False
-    output(line, frequency, point, dash, sleep_spase)
+    mass = []
+    for j in range(count_of_group):
+        group = ''
+        for x in range(count_of_symbol):
+            group += line[random.randint(0, len(line)-1)]
+        mass.append(group)
+
+    output(mass, frequency, point, dash, sleep_spase)
 
 
 if __name__ == '__main__':
     main()
-
